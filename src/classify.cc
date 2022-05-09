@@ -119,7 +119,7 @@ int main(int argc, char **argv) {
   opts.minimum_quality_score = 0;
   opts.minimum_hit_groups = 0;
   opts.use_memory_mapping = false;
-  opts.unbuffered_read = true;  // Just to false once cli setting is fixed
+  opts.unbuffered_read = false;
   taxon_counters_t taxon_counters; // stats per taxon
   ParseCommandLine(argc, argv, opts);
 
@@ -277,10 +277,8 @@ void ProcessFiles(const char *filename1, const char *filename2,
           // Unpaired data?  Just read in a sized block
           if (opts.unbuffered_read){
             ok_read = reader1.LoadBatch(*fptr1, 1);
-            cerr << "batch";
           }
           else {
-              cerr << "Block";
               ok_read = reader1.LoadBlock(*fptr1, (size_t)(3 * 1024 * 1024));
             }
           }
@@ -747,7 +745,7 @@ void MaskLowQualityBases(Sequence &dna, int minimum_quality_score) {
 void ParseCommandLine(int argc, char **argv, Options &opts) {
   int opt;
 
-  while ((opt = getopt(argc, argv, "h?H:t:o:T:p:R:C:U:O:Q:g:u:nmzqPSMK")) != -1) {
+  while ((opt = getopt(argc, argv, "h?H:t:o:T:p:R:C:U:O:Q:g:nmzquPSMK")) != -1) {
     switch (opt) {
       case 'h' : case '?' :
         usage(0);
@@ -858,6 +856,6 @@ void usage(int exit_code) {
        << "  -U filename      Filename/format to have unclassified sequences" << endl
        << "  -O filename      Output file for normal Kraken output" << endl
        << "  -K               In comb. w/ -R, provide minimizer information in report" << endl
-       << "  -u               Write results unbuffered per line" << endl;  // Currently not working
+       << "  -u               Write results unbuffered per line" << endl;
   exit(exit_code);
 }
